@@ -1,24 +1,20 @@
 {
   "name": "crud",
   "version": "1.0.0",
-  "description": "latihan crud",
+  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "kamal abrar",
+  "keywords": [],
+  "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.3",
-    "bootstrap": "^5.3.3",
-    "connect-flash": "^0.1.1",
     "ejs": "^3.1.10",
     "express": "^4.21.1",
     "express-session": "^1.18.1",
-    "jquery": "^3.7.1",
-    "mysql": "^2.18.1"
-  },
-  "devDependencies": {
-    "nodemon": "^3.1.7"
+    "mysql2": "^3.11.3"
   }
 }
