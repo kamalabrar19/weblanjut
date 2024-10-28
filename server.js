@@ -1,77 +1,114 @@
+// server.js
+
 const express = require('express');
-const mysql = require('mysql2');
-const bodyParser = require('body-parser');
+const mysql = require('mysql');
 const path = require('path');
+const session = require('express-session');
+const bodyParser = require('body-parser');
+const open = require('open');
+
 
 const app = express();
-const port = 3000;
 
-// Koneksi ke database MySQL
-const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '',
-  database: 'office_db'
+// Konfigurasi koneksi MySQL
+const connection = mysql.createConnection({
+    host     : 'localhost',
+    user     : 'root', // Ganti dengan username MySQL Anda
+    password : '', // Ganti dengan password MySQL Anda
+    database : 'office_db'
 });
 
-db.connect((err) => {
-  if (err) {
-    console.error('Error connecting to the database:', err.message);
-  } else {
-    console.log('Connected to MySQL database.');
-  }
+connection.connect((err) => {
+    if (err) throw err;
+    console.log('Terhubung ke database MySQL.');
 });
 
 // Middleware
+app.use(session({
+    secret: 'your_secret_key', // Ganti dengan secret key Anda
+    resave: true,
+    saveUninitialized: true
+}));
+app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
+
+// Menyajikan file statis dari folder public
 app.use(express.static(path.join(__dirname, 'public')));
 
-// API untuk mendapatkan semua data
-app.get('/api/equipment', (req, res) => {
-  const sql = 'SELECT * FROM equipment';
-  db.query(sql, (err, results) => {
-    if (err) {
-      return res.status(500).send(err.message);
+// Route untuk login
+app.post('/auth', (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+    if (username && password) {
+        connection.query('SELECT * FROM users WHERE username = ? AND password = ?', [username, password], (error, results) => {
+            if (error) throw error;
+            if (results.length > 0) {
+                req.session.loggedin = true;
+                req.session.username = username;
+                res.redirect('/index.html');
+            } else {
+                res.send('Username atau Password salah!');
+            }			
+            res.end();
+        });
+    } else {
+        res.send('Silakan masukkan Username dan Password!');
+        res.end();
     }
-    res.json(results);
-  });
 });
 
-// API untuk menambahkan data
-app.post('/api/equipment', (req, res) => {
-  const { name, type, quantity } = req.body;
-  const sql = 'INSERT INTO equipment (name, type, quantity) VALUES (?, ?, ?)';
-  db.query(sql, [name, type, quantity], (err, result) => {
-    if (err) {
-      return res.status(500).send(err.message);
+// Middleware untuk memeriksa apakah user sudah login
+function requireLogin (req, res, next) {
+    if (req.session.loggedin) {
+        next();
+    } else {
+        res.redirect('/login.html');
     }
-    res.json({ message: 'Data berhasil ditambahkan!' });
-  });
+}
+
+// Proteksi route index.html
+app.get('/index.html', requireLogin, (req, res) => {
+    res.sendFile(path.join(__dirname + '/public/index.html'));
 });
 
-// API untuk mengupdate data
-app.put('/api/equipment/:id', (req, res) => {
-  const { name, type, quantity } = req.body;
-  const sql = 'UPDATE equipment SET name = ?, type = ?, quantity = ? WHERE id = ?';
-  db.query(sql, [name, type, quantity, req.params.id], (err, result) => {
-    if (err) {
-      return res.status(500).send(err.message);
-    }
-    res.json({ message: 'Data berhasil diperbarui!' });
-  });
+// API routes untuk operasi CRUD
+app.get('/api/equipment', requireLogin, (req, res) => {
+    connection.query('SELECT * FROM equipment', (error, results) => {
+        if (error) throw error;
+        res.json(results);
+    });
 });
 
-// API untuk menghapus data
-app.delete('/api/equipment/:id', (req, res) => {
-  const sql = 'DELETE FROM equipment WHERE id = ?';
-  db.query(sql, [req.params.id], (err, result) => {
-    if (err) {
-      return res.status(500).send(err.message);
-    }
-    res.json({ message: 'Data berhasil dihapus!' });
-  });
+app.post('/api/equipment', requireLogin, (req, res) => {
+    const equipment = {name: req.body.name, type: req.body.type, quantity: req.body.quantity};
+    connection.query('INSERT INTO equipment SET ?', equipment, (error, results) => {
+        if (error) throw error;
+        res.json({id: results.insertId, ...equipment});
+    });
 });
 
-app.listen(port, () => {
-  console.log(`Server running at http://localhost:${port}`);
+app.put('/api/equipment/:id', requireLogin, (req, res) => {
+    const id = req.params.id;
+    const equipment = {name: req.body.name, type: req.body.type, quantity: req.body.quantity};
+    connection.query('UPDATE equipment SET ? WHERE id = ?', [equipment, id], (error) => {
+        if (error) throw error;
+        res.json({id: id, ...equipment});
+    });
 });
+
+app.delete('/api/equipment/:id', requireLogin, (req, res) => {
+    const id = req.params.id;
+    connection.query('DELETE FROM equipment WHERE id = ?', [id], (error) => {
+        if (error) throw error;
+        res.json({id: id});
+    });
+});
+
+// Menjalankan server
+app.listen(3000, () => {
+    console.log('Terhubung ke database MySQL.');
+    console.log('Server berjalan di port 3000.');
+    console.log('login dulu ya bosss');
+    open('http://localhost:3000/login.html');
+});
+

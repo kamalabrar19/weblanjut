@@ -1,101 +1,56 @@
-document.addEventListener('DOMContentLoaded', () => {
-    const equipmentTable = document.getElementById('equipmentTable');
-    const equipmentForm = document.getElementById('equipmentForm');
-    const submitButton = equipmentForm.querySelector('button[type="submit"]');
-    let editMode = false;
-    let editId = null;
+document.addEventListener('DOMContentLoaded', function() {
+    loadEquipment();
 
-    // Function to fetch and display equipment data
-    function loadEquipment() {
-        fetch('/api/equipment')
-            .then(response => response.json())
-            .then(data => {
-                equipmentTable.innerHTML = '';
-                data.forEach(item => {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>${item.id}</td>
-                        <td>${item.name}</td>
-                        <td>${item.type}</td>
-                        <td>${item.quantity}</td>
-                        <td>
-                            <button class="btn btn-warning btn-sm" onclick="editEquipment(${item.id}, '${item.name}', '${item.type}', ${item.quantity})">Edit</button>
-                            <button class="btn btn-danger btn-sm" onclick="deleteEquipment(${item.id})">Hapus</button>
-                        </td>
-                    `;
-                    equipmentTable.appendChild(row);
-                });
-            });
-    }
+    // Event listener untuk menambahkan peralatan baru
+    document.getElementById('create-equipment-form').addEventListener('submit', createEquipment);
+});
 
-    // Function to add or update equipment
-    equipmentForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const name = document.getElementById('name').value;
-        const type = document.getElementById('type').value;
-        const quantity = document.getElementById('quantity').value;
-
-        if (editMode) {
-            // Update existing equipment
-            fetch(`/api/equipment/${editId}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name, type, quantity })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-                loadEquipment();
-                equipmentForm.reset();
-                // Reset edit mode
-                editMode = false;
-                editId = null;
-                submitButton.textContent = 'Tambah';
-            });
-        } else {
-            // Add new equipment
-            fetch('/api/equipment', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name, type, quantity })
-            })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.message);
-                loadEquipment();
-                equipmentForm.reset();
-            });
-        }
-    });
-
-    // Function to delete equipment
-    window.deleteEquipment = function(id) {
-        fetch(`/api/equipment/${id}`, {
-            method: 'DELETE'
-        })
+function loadEquipment() {
+    fetch('/api/equipment')
         .then(response => response.json())
         .then(data => {
-            alert(data.message);
-            loadEquipment();
+            const equipmentList = document.getElementById('equipment-list');
+            equipmentList.innerHTML = '';
+            data.forEach(item => {
+                equipmentList.innerHTML += `
+                    <div>
+                        <p>ID: ${item.id}</p>
+                        <p>Nama: ${item.name}</p>
+                        <p>Tipe: ${item.type}</p>
+                        <p>Jumlah: ${item.quantity}</p>
+                        <button onclick="deleteEquipment(${item.id})">Hapus</button>
+                        <!-- Anda bisa menambahkan tombol edit di sini -->
+                    </div>
+                    <hr/>
+                `;
+            });
         });
-    };
+}
 
-    // Function to populate form with existing data for editing
-    window.editEquipment = function(id, name, type, quantity) {
-        document.getElementById('name').value = name;
-        document.getElementById('type').value = type;
-        document.getElementById('quantity').value = quantity;
+function createEquipment(e) {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const type = document.getElementById('type').value;
+    const quantity = document.getElementById('quantity').value;
 
-        // Set form to edit mode
-        editMode = true;
-        editId = id;
-        submitButton.textContent = 'Update';  // Change button text to 'Update'
-    };
+    fetch('/api/equipment', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({name: name, type: type, quantity: quantity})
+    })
+    .then(response => response.json())
+    .then(() => {
+        // Reset form dan muat ulang daftar peralatan
+        document.getElementById('create-equipment-form').reset();
+        loadEquipment();
+    });
+}
 
-    // Load equipment data on page load
-    loadEquipment();
-});
+function deleteEquipment(id) {
+    fetch(`/api/equipment/${id}`, {
+        method: 'DELETE'
+    })
+    .then(() => {
+        loadEquipment();
+    });
+}

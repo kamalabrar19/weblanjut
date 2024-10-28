@@ -1,105 +1,18 @@
-/* General Styles */
+/* public/css/styles.css */
+
 body {
-    background-color: #f8f9fa;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  }
-  
-  /* Make the container take full height and center form and table */
-  .container {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-  }
-  
-  /* Form Section Centering */
-  .form-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-  }
-  
-  .card {
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-  }
-  
-  .btn-custom {
-    background-color: #007bff;
-    color: white;
-    font-weight: bold;
-  }
-  
-  .btn-custom:hover {
-    background-color: #0056b3;
-  }
-  
-  /* Table Styling */
-  .table-section {
-    margin-top: 50px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 100%;
-  }
-  
-  .table-bordered {
-    border: 2px solid #007bff;
-  }
-  
-  .table-bordered th, 
-  .table-bordered td {
-    border: 1px solid #007bff;
-  }
-  
-  .table-hover tbody tr:hover {
-    background-color: rgba(0, 123, 255, 0.2);
-  }
-  
-  /* Dark Mode */
-  .dark-mode {
-    background-color: #343a40;
-    color: #f8f9fa;
-  }
-  
-  .dark-mode .form-check-label, 
-  .dark-mode .table-dark {
-    color: #f8f9fa;
-  }
-  
-  .dark-mode h1, 
-  .dark-mode h2 {
-    color: #f8f9fa;
-  }
-  
-  .dark-mode .card {
-    background-color: #495057;
-  }
-  
-  .dark-mode .btn-custom {
-    background-color: #6c757d;
-  }
-  
-  .dark-mode .btn-custom:hover {
-    background-color: #5a6268;
-  }
-  
-  .dark-mode table.table-striped > tbody > tr:nth-of-type(odd) {
-    background-color: #5a6268;
-  }
-  
-  .dark-mode table.table-striped > tbody > tr:nth-of-type(even) {
-    background-color: #495057;
-  }
-  
-  .dark-mode .table-bordered {
-    border-color: #6c757d;
-  }
-  
-  .dark-mode .table-hover tbody tr:hover {
-    background-color: rgba(108, 117, 125, 0.3);
-  }
-  
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+h1, h2 {
+    color: #333;
+}
+
+form input {
+    margin: 5px 0;
+}
+
+#equipment-list div {
+    margin-bottom: 15px;
+}
