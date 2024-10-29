@@ -1,12 +1,9 @@
-// server.js
-
 const express = require('express');
 const mysql = require('mysql');
 const path = require('path');
 const session = require('express-session');
 const bodyParser = require('body-parser');
 const open = require('open');
-
 
 const app = express();
 
@@ -32,6 +29,28 @@ app.use(session({
 app.use(bodyParser.urlencoded({extended : true}));
 app.use(bodyParser.json());
 
+// Middleware untuk memeriksa apakah user sudah login
+function requireLogin (req, res, next) {
+    if (req.session.loggedin) {
+        next();
+    } else {
+        res.redirect('/login.html');
+    }
+}
+
+// Middleware untuk melindungi akses ke index.html
+app.use((req, res, next) => {
+    if (req.path === '/index.html' || req.path === '/index') {
+        if (req.session.loggedin) {
+            next();
+        } else {
+            res.redirect('/login.html');
+        }
+    } else {
+        next();
+    }
+});
+
 // Menyajikan file statis dari folder public
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -56,15 +75,6 @@ app.post('/auth', (req, res) => {
         res.end();
     }
 });
-
-// Middleware untuk memeriksa apakah user sudah login
-function requireLogin (req, res, next) {
-    if (req.session.loggedin) {
-        next();
-    } else {
-        res.redirect('/login.html');
-    }
-}
 
 // Proteksi route index.html
 app.get('/index.html', requireLogin, (req, res) => {
@@ -108,7 +118,6 @@ app.delete('/api/equipment/:id', requireLogin, (req, res) => {
 app.listen(3000, () => {
     console.log('Terhubung ke database MySQL.');
     console.log('Server berjalan di port 3000.');
-    console.log('login dulu ya bosss');
+    console.log('Login dulu ya bosss');
     open('http://localhost:3000/login.html');
 });
-
