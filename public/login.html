@@ -47,7 +47,7 @@
 <body>
   <div class="login-container">
     <h2 class="text-center">Login</h2>
-    <!-- Notifikasi error akan ditampilkan jika error parameter ada di URL -->
+    
     <div id="error-message" class="alert alert-danger" style="display: none;">
       Login gagal, coba lagi!
     </div>
@@ -65,7 +65,7 @@
   </div>
 
   <script>
-    // Mengecek apakah URL mengandung parameter error
+ 
     const urlParams = new URLSearchParams(window.location.search);
     if (urlParams.has('error')) {
       document.getElementById('error-message').style.display = 'block';

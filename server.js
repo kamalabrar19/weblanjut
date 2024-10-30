@@ -45,7 +45,7 @@ function isAuthenticated(req, res, next) {
 app.use('/auth', authRoutes);
 app.use('/kantor', isAuthenticated, kantorRoutes);
 
-// Protected route for dashboard
+// Protected route untuk dashboard
 app.get('/dashboard', isAuthenticated, (req, res) => {
   res.sendFile(path.join(__dirname, 'protected', 'dashboard.html'));
 });
@@ -63,7 +63,7 @@ app.get('/logout', (req, res) => {
 app.listen(3000, async () => {
   console.log('Server started on http://localhost:3000');
 
-  // Menggunakan import() untuk membuka halaman login di browser secara otomatis
+
   const open = (await import('open')).default;
   open('http://localhost:3000/login.html');
 });

@@ -14,7 +14,7 @@ router.post('/login', async (req, res) => {
       req.session.loggedIn = true;
       res.redirect('/dashboard');
     } else {
-      res.redirect('/login.html?error=1'); // Redirect ke halaman login dengan parameter error
+      res.redirect('/login.html?error=1'); 
     }
   } catch (error) {
     console.error('Login error:', error);
