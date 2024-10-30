@@ -5,10 +5,52 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Login</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <style>
+    body {
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: linear-gradient(to right, #6a11cb, #2575fc);
+      margin: 0;
+    }
+
+    .login-container {
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+      max-width: 400px;
+      width: 100%;
+    }
+
+    h2.text-center {
+      color: #6a11cb;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    .btn-primary {
+      background-color: #6a11cb;
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background-color: #5a0fb2;
+    }
+
+    .alert {
+      margin-bottom: 20px;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
+  <div class="login-container">
     <h2 class="text-center">Login</h2>
+    <!-- Notifikasi error akan ditampilkan jika error parameter ada di URL -->
+    <div id="error-message" class="alert alert-danger" style="display: none;">
+      Login gagal, coba lagi!
+    </div>
     <form action="/auth/login" method="POST">
       <div class="form-group">
         <label for="username">Username:</label>
@@ -21,5 +63,13 @@
       <button type="submit" class="btn btn-primary btn-block">Login</button>
     </form>
   </div>
+
+  <script>
+    // Mengecek apakah URL mengandung parameter error
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('error')) {
+      document.getElementById('error-message').style.display = 'block';
+    }
+  </script>
 </body>
 </html>

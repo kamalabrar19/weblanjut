@@ -6,36 +6,66 @@
   <title>Dashboard</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <link rel="stylesheet" href="/public/css/styles.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <style>
     body {
+      background-color: #f5f5f5;
+      color: #333;
       min-height: 100vh;
       position: relative;
-      padding-bottom: 100px; /* Spasi untuk footer */
+      padding-bottom: 100px;
+      font-family: 'Arial', sans-serif;
+    }
+
+    header {
+      background: linear-gradient(90deg, #3a3f47, #656d78);
+      border-bottom: 4px solid #f39c12;
+      color: #fff;
     }
 
     footer {
       position: absolute;
       bottom: 0;
       width: 100%;
-      background-color: #007bff;
-      color: white;
+      background: linear-gradient(90deg, #656d78, #3a3f47);
+      color: #fff;
       text-align: center;
       padding: 15px 0;
     }
 
-    /* Styling untuk tabel agar memiliki border */
+    footer a {
+      color: #f39c12;
+      margin: 0 10px;
+      text-decoration: none;
+      font-size: 1.5em;
+    }
+
+    footer a:hover {
+      color: #ffffff;
+    }
+
+    /* Styling untuk tabel agar lebih menarik */
     #equipmentTable {
-      border: 2px solid #333;
+      border: 2px solid #f39c12;
+      background-color: #ffffff;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     #equipmentTable th, #equipmentTable td {
-      border: 1px solid #333;
+      border: 1px solid #ddd;
+      color: #333;
+      padding: 12px;
+    }
+
+    #equipmentTable th {
+      background-color: #f39c12;
+      color: #fff;
     }
   </style>
 </head>
 <body>
   <!-- Header -->
-  <header class="bg-primary text-white py-3">
+  <header class="text-white py-3">
     <div class="container d-flex justify-content-between align-items-center">
       <h1>Data Peralatan Kantor UTS Web Lanjut</h1>
       <button class="btn btn-light" onclick="logout()">Logout</button>
@@ -113,6 +143,10 @@
   <!-- Footer -->
   <footer>
     <p>Data Peralatan Kantor UTS Web Lanjut</p>
+    <p>Follow me: 
+      <a href="https://instagram.com/kamal.abrarr" target="_blank"><i class="fab fa-instagram"></i></a>
+      <a href="https://www.youtube.com/@kamalabrar8490" target="_blank"><i class="fab fa-youtube"></i></a>
+    </p>
   </footer>
 
   <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
@@ -120,11 +154,10 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
     function openAddEquipmentModal() {
-      // Reset form untuk menambah data baru
       document.getElementById('addEquipmentForm').reset();
       document.getElementById('equipmentId').value = '';
       document.getElementById('equipmentModalLabel').innerText = 'Tambah Peralatan Kantor';
-      $('#equipmentModal').modal('show'); // Buka modal
+      $('#equipmentModal').modal('show');
     }
 
     function fetchData() {
@@ -134,13 +167,21 @@
           const tableBody = document.getElementById('equipmentTable').querySelector('tbody');
           tableBody.innerHTML = '';
           data.forEach(item => {
+            // Format tanggal ke bahasa Indonesia
+            const formattedDate = new Intl.DateTimeFormat('id-ID', { 
+              weekday: 'long', 
+              year: 'numeric', 
+              month: 'long', 
+              day: 'numeric' 
+            }).format(new Date(item.purchase_date));
+
             const row = `
               <tr>
                 <td>${item.id}</td>
                 <td>${item.name}</td>
                 <td>${item.type}</td>
                 <td>${item.quantity}</td>
-                <td>${item.purchase_date}</td>
+                <td>${formattedDate}</td>
                 <td>
                   <button onclick="editEquipment(${item.id}, '${item.name}', '${item.type}', ${item.quantity}, '${item.purchase_date}')" class="btn btn-warning">Edit</button>
                   <button onclick="deleteEquipment(${item.id})" class="btn btn-danger">Delete</button>
@@ -175,7 +216,7 @@
         body: JSON.stringify(formData)
       }).then(() => {
         fetchData();
-        $('#equipmentModal').modal('hide'); // Tutup modal
+        $('#equipmentModal').modal('hide');
       });
     });
 
@@ -186,7 +227,7 @@
       document.getElementById('quantity').value = quantity;
       document.getElementById('purchase_date').value = purchase_date;
       document.getElementById('equipmentModalLabel').innerText = 'Edit Peralatan Kantor';
-      $('#equipmentModal').modal('show'); // Buka modal
+      $('#equipmentModal').modal('show');
     }
 
     function deleteEquipment(id) {
@@ -195,10 +236,7 @@
     }
 
     function logout() {
-      // Fungsi logout yang bisa Anda sesuaikan
-      alert("Anda telah logout");
-      // Contoh: Arahkan ke halaman login
-      window.location.href = "/login.html";
+      window.location.href = '/logout';
     }
   </script>
 </body>
