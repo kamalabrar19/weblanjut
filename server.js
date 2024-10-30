@@ -60,6 +60,10 @@ app.get('/logout', (req, res) => {
   });
 });
 
-app.listen(3000, () => {
+app.listen(3000, async () => {
   console.log('Server started on http://localhost:3000');
+
+  // Menggunakan import() untuk membuka halaman login di browser secara otomatis
+  const open = (await import('open')).default;
+  open('http://localhost:3000/login.html');
 });

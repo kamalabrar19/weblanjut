@@ -159,7 +159,7 @@
       document.getElementById('equipmentModalLabel').innerText = 'Tambah Peralatan Kantor';
       $('#equipmentModal').modal('show');
     }
-
+  
     function fetchData() {
       fetch('/kantor/equipment')
         .then(response => response.json())
@@ -174,7 +174,7 @@
               month: 'long', 
               day: 'numeric' 
             }).format(new Date(item.purchase_date));
-
+  
             const row = `
               <tr>
                 <td>${item.id}</td>
@@ -192,9 +192,9 @@
           });
         });
     }
-
+  
     fetchData();
-
+  
     document.getElementById('addEquipmentForm').addEventListener('submit', function(event) {
       event.preventDefault();
       const equipmentId = document.getElementById('equipmentId').value;
@@ -204,7 +204,7 @@
         quantity: document.getElementById('quantity').value,
         purchase_date: document.getElementById('purchase_date').value,
       };
-
+  
       const method = equipmentId ? 'PUT' : 'POST';
       const url = equipmentId ? `/kantor/equipment/${equipmentId}` : '/kantor/equipment';
       
@@ -219,7 +219,7 @@
         $('#equipmentModal').modal('hide');
       });
     });
-
+  
     function editEquipment(id, name, type, quantity, purchase_date) {
       document.getElementById('equipmentId').value = id;
       document.getElementById('name').value = name;
@@ -229,12 +229,16 @@
       document.getElementById('equipmentModalLabel').innerText = 'Edit Peralatan Kantor';
       $('#equipmentModal').modal('show');
     }
-
+  
     function deleteEquipment(id) {
-      fetch(`/kantor/equipment/${id}`, { method: 'DELETE' })
-        .then(() => fetchData());
+      // Menambahkan konfirmasi sebelum menghapus
+      const confirmed = confirm('Apakah Anda yakin ingin menghapus peralatan ini?');
+      if (confirmed) {
+        fetch(`/kantor/equipment/${id}`, { method: 'DELETE' })
+          .then(() => fetchData());
+      }
     }
-
+  
     function logout() {
       window.location.href = '/logout';
     }
